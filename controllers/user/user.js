@@ -1,28 +1,46 @@
-const db = require('../../config/db');
+// import libs/other
+const nanoid = require('nanoid');
+
+// import models
 const User = require('../../models/User');
 
 module.exports = {
   create: async (req, res) => {
-    res.status(200).send({data: req, message: 'Signup endpoint hit!'});
+    try {
+      // pull props off of request and generate uuid
+      const {email, pw_hash, auth_level} = req.body;
+      const id = nanoid();
+
+      // build response object and send response
+      const userObj = await User.create({id, email, pw_hash, auth_level});
+      res.status(200).send(userObj);
+
+    } catch (err) {
+      const errorObj = {data: null, message: 'There was an error creating a user using your information.', error: err};
+      res.status(500).send(errorObj);
+    }
   },
   readSingle: async (req, res) => {
-    res.status(200).send({data: req, message: 'read single user endpoint hit!'});
+    console.log(req.body);
+    const userObj = {data: null, message: 'read single user endpoint hit!'};
+    res.status(200).send(userObj);
   },
   readAll: async (req, res) => {
     try {
-      const users = await User.findAll();
-      console.log(users);
-      res.status(200).send(users);
+      const usersArr = await User.findAll();
+      res.status(200).send({data: usersArr, message: 'Here you go! All users.'});
   
     } catch (err) {
-      const errorObj = {data: "", message: 'There was an error fetching all users.', error: err};
+      const errorObj = {data: null, message: 'There was an error fetching all users.', error: err};
       res.status(500).send(errorObj);
     }
   },
   update: async (req, res) => {
-    res.status(200).send({data: req, message: 'update single user endpoint hit!'});
+    const userObj = {data: null, message: 'update single user endpoint hit!'};
+    res.status(200).send(userObj);
   },
   delete: async (req, res) => {
-    res.status(200).send({data: req, message: 'delete user endpoint hit!'});
+    const userObj = {data: null, message: 'delete user endpoint hit!'};
+    res.status(200).send(userObj);
   }
 };

@@ -1,12 +1,18 @@
 const Sequelize = require("sequelize");
-const db = require("../config/database");
+const db = require("../config/db");
 
-const User = db.define("gig", {
+const User = db.define("user", {
   email: {
     type: Sequelize.STRING
   },
-  password: {
+  pw_hash: {
     type: Sequelize.STRING
+  },
+  is_superuser: {
+    type: Sequelize.BOOLEAN
+  },
+  auth_level: {
+    type: Sequelize.INTEGER
   }
 });
 

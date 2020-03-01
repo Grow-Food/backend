@@ -1,7 +1,7 @@
 const express = require("express");
 const path = require("path");
 const cors = require("cors");
-const secrets = require("./config/secrets.js");
+const secrets = require("./config/secrets");
 const db = require("./config/db");
 
 
@@ -20,7 +20,13 @@ server.use(cors());
 // * ROUTES * 
 
 // auth routes
-server.use("/auth", require("./routes/auth"));
+server.use("/auth", require("./routes/user/auth/auth"));
+
+// user routes
+server.use("/user", require('./routes/user/user.js'));
 
 // index route
 server.get("/", (req, res) => res.send({ msg: "INDEX" }));
+
+// // db test
+// db.authenticate();

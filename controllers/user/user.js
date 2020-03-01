@@ -1,3 +1,6 @@
+const db = require('../../config/db');
+const User = require('../../models/User');
+
 module.exports = {
   create: async (req, res) => {
     res.status(200).send({data: req, message: 'Signup endpoint hit!'});

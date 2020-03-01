@@ -1,7 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../../config/db");
-const User = require('../../models/User');
 
 // import controller
 const controller = require('../../controllers/user/user');

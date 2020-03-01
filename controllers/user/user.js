@@ -21,14 +21,14 @@ module.exports = {
     }
   },
   readSingle: async (req, res) => {
-    console.log(req.body);
     const userObj = {data: null, message: 'read single user endpoint hit!'};
     res.status(200).send(userObj);
   },
   readAll: async (req, res) => {
     try {
       const usersArr = await User.findAll();
-      res.status(200).send({data: usersArr, message: 'Here you go! All users.'});
+      const usersObj = {data: usersArr, message: 'Here you go! All users.'};
+      res.status(200).send(usersObj);
   
     } catch (err) {
       const errorObj = {data: null, message: 'There was an error fetching all users.', error: err};

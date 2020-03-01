@@ -1,8 +1,6 @@
 const express = require("express");
 const secrets = require("./config/secrets");
-
-// import universal cors header helper
-const corsHeader = require("./helpers/header");
+var bodyParser = require("body-parser");
 
 // create express server
 console.log("environment:", secrets.environment);
@@ -10,7 +8,14 @@ const server = express();
 
 // configure cors and json
 server.use(express.json());
-server.use((req, res, next) => corsHeader.header(req, res, next))
+server.use(bodyParser.urlencoded({extended: true}));
+server.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Content-Type', 'application/json');
+  next();
+});
 
 // determine port and start server
 const PORT = process.env.PORT || 5000;

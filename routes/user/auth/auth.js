@@ -3,12 +3,12 @@ const router = express.Router();
 const db = require("../../../config/db");
 
 // import controller
-const controller = require('../../../controllers/user/auth/auth');
+const controller = require("../../../controllers/user/auth/auth");
 
 // sign in
-router.get("/signin", controller.signIn);
+router.post("/signin", controller.signIn);
 
 // sign out
-router.get("/signout", controller.signOut);
+router.post("/signout", controller.signOut);
 
 module.exports = router;

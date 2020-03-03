@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../../../config/db");
 
 // import controller
 const controller = require("../../../controllers/user/auth/auth");

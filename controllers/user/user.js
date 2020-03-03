@@ -1,19 +1,39 @@
 // import libs/other
 const nanoid = require("nanoid");
+const bcrypt = require("bcryptjs");
 
-// import models
+// import model
 const User = require("../../models/User");
 
 module.exports = {
   create: async (req, res) => {
     try {
-      // pull props off of request and generate uuid
-      const { email, pw_hash, auth_level } = req.body;
+      // pull props off of request, generate uuid, hash pw
+      const { email, pw, auth_level } = req.body;
       const id = nanoid();
+      const pw_hash = await bcrypt.hashSync(pw, 8);
 
       // build response object and send response
-      const userObj = await User.create({ id, email, pw_hash, auth_level });
-      res.status(200).send(userObj);
+      const userCreationSuccess = await User.create({
+        id,
+        email,
+        pw_hash,
+        auth_level
+      });
+
+      if (userCreationSuccess == 1) {
+        // generate jwt access and refresh tokens
+        const accessToken = "access_token";
+        const refreshToken = "refresh_token";
+
+        const successObj = {
+          data: { success: userCreationSuccess, accessToken, refreshToken },
+          message: "User created successfully!"
+        };
+
+        // send success response
+        res.status(200).send(successObj);
+      }
     } catch (err) {
       const errorObj = {
         data: null,
@@ -29,7 +49,7 @@ module.exports = {
   },
   readAll: async (req, res) => {
     try {
-      const usersArr = await User.findAll();
+      const usersArr = await User.readAll();
       const usersObj = { data: usersArr, message: "Here you go! All users." };
       res.status(200).send(usersObj);
     } catch (err) {

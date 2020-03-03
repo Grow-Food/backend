@@ -4,15 +4,17 @@ const bcrypt = require("bcryptjs");
 // import model
 const User = require("../../../models/User");
 
+// import auth helpers
+const authHelpers = require("../../../helpers/auth");
+
 module.exports = {
   signIn: async (req, res) => {
     try {
-      const { email, pw } = req.body;
+      const { pw } = req.body;
+      const givenEmail = req.body.email;
 
       // find user in db by email
-      const foundUserResult = await User.readSingleByEmail(email);
-
-      console.log(foundUserResult);
+      const foundUserResult = await User.readSingleByEmail(givenEmail);
 
       if (foundUserResult) {
         // compare hashes
@@ -21,11 +23,21 @@ module.exports = {
         console.log(hashesMatch);
 
         if (hashesMatch) {
-          // TODO: generate jwt access and refresh tokens
+          // generate jwt access and refresh tokens
+          const accessToken = authHelpers.generateToken(givenEmail, "access");
+          const refreshToken = authHelpers.generateToken(givenEmail, "refresh");
+
+          // pull data from foundUserResult
+          const { email, auth_level, id } = foundUserResult;
 
           res.status(200).send({
-            data: foundUserResult,
-            message: `${foundUserResult.email} signed in!`
+            data: {
+              email,
+              auth_level,
+              accessToken,
+              refreshToken
+            },
+            message: `${email} signed in!`
           });
         } else {
           res.status(500).send({

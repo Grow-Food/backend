@@ -1,34 +1,32 @@
-const express = require("express");
-const secrets = require("./config/secrets");
-var bodyParser = require("body-parser");
+// import libs/other
+const express = require("express"),
+  helmet = require("helmet"),
+  Cookies = require("cookies");
 
-// create express server
+// import middleware and secrets
+const secrets = require("./config/secrets"),
+  { setJsonHeaders, initHelmet } = require("./middleware/auth");
+
+// init express server
 console.log("environment:", secrets.environment);
 const server = express();
 
-// configure cors and json
+// configure cors headers and json
 server.use(express.json());
-server.use(bodyParser.urlencoded({extended: true}));
-server.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.setHeader('Content-Type', 'application/json');
-  next();
-});
+server.use((req, res, next) => setJsonHeaders(req, res, next));
+server.use(helmet());
 
 // determine port and start server
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, console.log(`SERVER STARTED ON PORT: ${PORT}`));
 
-// * ROUTES * 
+// * ROUTES *
 
 // auth routes
 server.use("/auth", require("./routes/user/auth/auth"));
 // user routes
-server.use("/user", require('./routes/user/user.js'));
+server.use("/user", require("./routes/user/user"));
 // index route
-server.get("/", (req, res) => res.send({ msg: "INDEX" }));
-
-// // db test
-// db.authenticate();
+server.get("/", (req, res) =>
+  res.send({ status: 1, message: "INDEX", data: "" })
+);

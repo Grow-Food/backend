@@ -21,17 +21,10 @@ const User = {
     // 1 if user was created successfully, 0 if not
     return createdUser[1];
   },
-  readSingleByEmail: async email => {
+  readSingleBy: async (filterByColumn, value) => {
     const foundUser = await db.query(
-      'SELECT * FROM "Users" WHERE email = :email LIMIT 1',
-      { replacements: { email }, type: queryTypes.SELECT }
-    );
-    return foundUser[0];
-  },
-  readSingleById: async id => {
-    const foundUser = await db.query(
-      'SELECT * FROM "Users" WHERE id = :id LIMIT 1',
-      { replacements: { id }, type: queryTypes.SELECT }
+      `SELECT * FROM "Users" WHERE ${filterByColumn} = :value LIMIT 1`,
+      { replacements: { value }, type: queryTypes.SELECT }
     );
     return foundUser[0];
   },

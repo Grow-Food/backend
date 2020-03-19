@@ -1,15 +1,20 @@
 // import libs/other
-const nanoid = require("nanoid");
-const bcrypt = require("bcryptjs");
+const nanoid = require("nanoid"),
+  bcrypt = require("bcryptjs");
 
 // import model
 const User = require("../../models/User");
 
+// import auth helpers
+const authHelpers = require("../../helpers/auth");
+
 module.exports = {
   create: async (req, res) => {
     try {
-      // pull props off of request, generate uuid, hash pw
+      // pull props off of request
       const { email, pw, auth_level } = req.body;
+
+      // generate uuid, hash pw
       const id = nanoid();
       const pw_hash = await bcrypt.hashSync(pw, 8);
 
@@ -23,8 +28,8 @@ module.exports = {
 
       if (userCreationSuccess == 1) {
         // generate jwt access and refresh tokens
-        const accessToken = "access_token";
-        const refreshToken = "refresh_token";
+        await authHelpers.generateToken(res, email, "access");
+        await authHelpers.generateToken(res, email, "refresh");
 
         const successObj = {
           data: { success: userCreationSuccess, accessToken, refreshToken },
@@ -47,6 +52,12 @@ module.exports = {
     const userObj = { data: null, message: "read single user endpoint hit!" };
     res.status(200).send(userObj);
   },
+  // TODO: dashboard
+  fetchDashboard: async (req, res) => {
+    // pull props off data
+    // fetch data for user dashboard
+    // send data to client
+  },
   readAll: async (req, res) => {
     try {
       const usersArr = await User.readAll();
@@ -61,10 +72,12 @@ module.exports = {
       res.status(500).send(errorObj);
     }
   },
+  // TODO: user should be able to update themselves
   update: async (req, res) => {
     const userObj = { data: null, message: "update single user endpoint hit!" };
     res.status(200).send(userObj);
   },
+  // TODO: user should be able to delete their account
   delete: async (req, res) => {
     const userObj = { data: null, message: "delete user endpoint hit!" };
     res.status(200).send(userObj);

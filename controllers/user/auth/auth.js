@@ -14,28 +14,34 @@ module.exports = {
       const givenEmail = req.body.email;
 
       // find user in db by email
-      const foundUserResult = await User.readSingleByEmail(givenEmail);
+      const foundUserResult = await User.readSingleBy("email", givenEmail);
 
       if (foundUserResult) {
         // compare hashes
         const hashesMatch = await bcrypt.compare(pw, foundUserResult.pw_hash);
 
-        console.log(hashesMatch);
-
         if (hashesMatch) {
-          // generate jwt access and refresh tokens
-          const accessToken = authHelpers.generateToken(givenEmail, "access");
-          const refreshToken = authHelpers.generateToken(givenEmail, "refresh");
+          // generate jwt access and refresh tokens, set auth cookies
+          const accessToken = await authHelpers.generateToken(
+            res,
+            givenEmail,
+            "access"
+          );
+          const refreshToken = await authHelpers.generateToken(
+            res,
+            givenEmail,
+            "refresh"
+          );
+
+          authHelpers.setBothAuthCookies(res, accessToken, refreshToken);
 
           // pull data from foundUserResult
-          const { email, auth_level, id } = foundUserResult;
+          const { email, auth_level } = foundUserResult;
 
           res.status(200).send({
             data: {
               email,
-              auth_level,
-              accessToken,
-              refreshToken
+              auth_level
             },
             message: `${email} signed in!`
           });
